@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!--利用namespace属性，绑定当前映射文件和Mapper接口映射关联-->
+<mapper namespace="com.jensen.dao.BrandMapper">
+
+    <sql id="brandFiles">
+        id,brand_name AS brandName,company_name AS companyName,ordered,description,status
+    </sql>
+
+    <resultMap id="brandMap" type="com.jensen.pojo.Brand">
+        <!--id标签：配置数据表的主键字段和实体类中的属性映射-->
+        <!--名称一样可以省略-->
+        <id column="id" property="id"></id>
+        <!--result标签：配置数据表中非主键字段和实体类的属性映射-->
+        <result column="brand_name" property="brandName"></result>
+        <result column="company_name" property="companyName"></result>
+    </resultMap>
+
+    <delete id="deleteBrandByIds" parameterType="String">
+        delete from tb_brand
+        where id
+        in
+        <foreach collection="ids" item="id" separator="," open="(" close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <update id="updateBrand">
+        update tb_brand
+        <set>
+            <if test="brandName!=null">
+                brand_name =#{brandName},
+            </if>
+            <if test="companyName!=null">
+                company_name=#{companyName},
+            </if>
+            <if test="ordered!=null">
+                ordered=#{ordered},
+            </if>
+            <if test="description!=null">
+                description=#{description},
+            </if>
+            <if test="status!=null">
+                status=#{status}
+            </if>
+        </set>
+        where id=#{id}
+    </update>
+
+    <insert id="addBrand" parameterType="com.jensen.pojo.Brand">
+        insert into tb_brand (brand_name, company_name, ordered, description, status)
+        values (#{brandName}, #{companyName}, #{ordered}, #{description}, #{status})
+    </insert>
+
+    <select id="findBrandByCondition3" resultMap="brandMap">
+        SELECT id,brand_name,company_name,ordered,description,status
+        FROM tb_brand
+        <where>
+            <choose>
+                <when test="brandname!=null">
+                    AND brand_name =#{brandname}
+                </when>
+                <when test="companyname!=null">
+                    AND company_name=#{companyname}
+                </when>
+                <when test="status!=null">
+                    AND status=#{status}
+                </when>
+            </choose>
+        </where>
+    </select>
+
+    <select id="findBrandByCondition2" resultMap="brandMap">
+        SELECT id,brand_name,company_name,ordered,description,status
+        FROM tb_brand
+        <where>
+            <if test="brandName!=null">
+                AND brand_name =#{brandName}
+            </if>
+            <if test="companyName!=null">
+                AND company_name=#{companyName}
+            </if>
+            <if test="status!=null">
+                AND status=#{status}
+            </if>
+        </where>
+    </select>
+
+    <select id="findBrandByCondition" resultMap="brandMap">
+        SELECT id,brand_name,company_name,ordered,description,status
+        FROM tb_brand
+        WHERE 1=1
+        <if test="brandName!=null">
+            AND brand_name =#{brandName}
+        </if>
+        <if test="companyName!=null">
+            AND company_name=#{companyName}
+        </if>
+        <if test="status!=null">
+            AND status=#{status}
+        </if>
+    </select>
+
+    <select id="findAllBrand3" resultType="com.jensen.pojo.Brand">
+        SELECT
+        <include refid="brandFiles"></include>
+        FROM tb_brand
+    </select>
+
+    <select id="findAllBrand2" resultMap="brandMap">
+        SELECT id,brand_name,company_name,ordered,description,status
+        FROM tb_brand;
+    </select>
+
+    <select id="findAllBrand" resultType="com.jensen.pojo.Brand">
+        SELECT id,brand_name AS brandName,company_name AS companyName,ordered,description,status
+        FROM tb_brand;
+    </select>
+
+    <select id="findBrandById" resultType="com.jensen.pojo.Brand">
+        SELECT id,brand_name AS brandName,company_name AS companyName,ordered,description,status
+        FROM tb_brand
+        where id=#{id}
+    </select>
+
+</mapper>

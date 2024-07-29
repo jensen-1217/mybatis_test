@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!--利用namespace属性，绑定当前映射文件和Mapper接口映射关联-->
+<mapper namespace="com.jensen.dao.UserMapper">
+
+    <select id="findUserById" resultType="com.jensen.pojo.User">
+        select id ,user_name AS userName, password,name,age,sex
+        from tb_user
+        where id=#{id};
+    </select>
+
+</mapper>

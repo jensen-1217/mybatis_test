@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!--利用namespace属性，绑定当前映射文件和Mapper接口映射关联-->
+<mapper namespace="com.jensen.dao.UserMapper">
+
+    <resultMap id="userMapper" type="com.jensen.pojo.User" autoMapping="true">
+        <id column="uid" property="id"></id>
+        <result column="user_name" property="userName"></result>
+
+        <collection property="orders" javaType="java.util.List" ofType="com.jensen.pojo.Order">
+            <id column="oid" property="id"></id>
+            <result column="order_number" property="orderNumber"></result>
+        </collection>
+    </resultMap>
+
+    <select id="findUserById"  resultMap="userMapper">
+      select u.id as uid,
+       u.user_name,
+       u.password,
+       u.name,
+       u.age,
+       u.sex,
+       o.id as oid,
+       o.order_number
+    from tb_order AS o inner join tb_user AS u
+    on o.user_id = u.id
+    where user_id=#{id};
+    </select>
+
+</mapper>
