@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!--利用namespace属性，绑定当前映射文件和Mapper接口映射关联-->
+<mapper namespace="com.jensen.dao.UserMapper">
+
+    <resultMap id="userMap" type="com.jensen.pojo.User" autoMapping="true">
+        <id column="user_id" property="id"></id>
+        
+        <collection property="roles" javaType="java.util.List" ofType="com.jensen.pojo.Role" autoMapping="true">
+            <id column="role_id" property="id"></id>
+        </collection>
+        
+    </resultMap>
+
+    <!--SQL查询语句-->
+    <select id="findUserByPage" resultMap="userMap">
+        select t_user.id AS user_id, t_user.username, t_user.password, t_user.remark, t_user.email, t_user.createTime, t_user.updateTime,
+            t_role.id AS role_id, t_role.name, t_role.keyword, t_role.description
+        from (select id, username, password, remark, email, createTime, updateTime
+                from t_user
+                order by id limit #{beginIndex},#{size})as t_user
+            inner join t_user_role
+            inner join t_role
+        on t_user.id = t_user_role.user_id and t_role.id=t_user_role.role_id
+    </select>
+
+</mapper>
